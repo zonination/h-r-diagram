@@ -1,6 +1,7 @@
 #Set working directory, open files, fire up the libraries
 setwd("~/Dropbox/R/Star Catalog")
-catalog <- read.table("hygdata_v3.csv",sep=",", stringsAsFactors=FALSE,header=TRUE)
+catalog <- read.csv("hygdata_v3-1.csv",sep=",", stringsAsFactors=FALSE,header=TRUE)
+catalog <- rbind(catalog,read.csv("hygdata_v3-2.csv",sep=",", stringsAsFactors=FALSE,header=TRUE))
 library(ggplot2)
 
 z_theme <- function() {
@@ -27,11 +28,11 @@ z_theme <- function() {
 
 catalog$randomseed<-runif(nrow(catalog),min=0,max=2*pi)
 for(n in seq(0,360,10)){
-if(n<100){png(file=paste("star_anim0",n,".png",sep=""), width=600, height=900)}
-  else{png(file=paste("star_anim",n,".png",sep=""), width=600, height=900)}
+if(n<100){png(file=paste("star_anim0",n,".png",sep=""), width=600, height=900)
+  }else{png(file=paste("star_anim",n,".png",sep=""), width=600, height=900)}
 print(
   ggplot(catalog,aes(ci,absmag))+
-  geom_point(size=.5,aes(alpha=sin(randomseed+n*pi/180), color=ci))+
+  geom_point(shape=".",aes(alpha=sin(randomseed+n*pi/180), color=ci))+
   scale_y_reverse()+
   scale_color_gradientn(
     colours=c("blue","skyblue","white","orange","red"),
