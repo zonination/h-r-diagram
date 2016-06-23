@@ -7,8 +7,7 @@ Got bored with a lot of the Hertzsprung–Russell diagrams out there, so I made 
 Stars twinkle for two reasons:
 
 * Aesthetics
-* Prevents overploting
-
+* Reduces overploting
 
 ## Graphic
 
