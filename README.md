@@ -1,4 +1,4 @@
-# Hertzsprung-Russell Diagram with 119,614 datapoints
+# Animated Hertzsprung-Russell Diagram with 119,614 datapoints
 
 ## About
 
