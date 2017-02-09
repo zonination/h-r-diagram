@@ -1,53 +1,47 @@
 #Set working directory, open files, fire up the libraries
-setwd("~/Dropbox/R/Star Catalog")
+# setwd("~/Dropbox/R/Star Catalog")
 catalog <- read.csv("hygdata_v3-1.csv",sep=",", stringsAsFactors=FALSE,header=TRUE)
 catalog <- rbind(catalog,read.csv("hygdata_v3-2.csv",sep=",", stringsAsFactors=FALSE,header=TRUE))
 library(ggplot2)
+source("z_theme.R")
 
-z_theme <- function() {
-  theme_bw(base_size=9) +
-    #Background and Grid formatting
-    theme(panel.background=element_rect(fill="#000000", color="#000000")) +
-    theme(plot.background=element_rect(fill="#000000", color="#000000")) +
-    theme(panel.border=element_rect(color="#252525")) +
-    theme(panel.grid.major=element_blank()) +
-    theme(panel.grid.minor=element_blank()) +
-    #Legend formatting
-    theme(legend.background = element_rect(fill="#000000")) +
-    theme(legend.text = element_blank()) +
-    theme(legend.title= element_blank())+
-    theme(legend.position="none")+
-    #Axis & Title Formatting
-    theme(plot.title=element_text(color="#D9D9D9", size=20, vjust=1.25)) +
-    theme(axis.ticks=element_blank()) +
-    theme(axis.text.x=element_text(size=14,color="#BDBDBD")) +
-    theme(axis.text.y=element_text(size=14,color="#BDBDBD")) +
-    theme(axis.title.x=element_text(size=16,color="#BDBDBD", vjust=0)) +
-    theme(axis.title.y=element_text(size=16,color="#BDBDBD", vjust=1.25))
-}
-
+# Set a randomseed to make the stars twinkle
 catalog$randomseed<-runif(nrow(catalog),min=0,max=2*pi)
+
+# This for() loop will step through 36 frames of the gif,
+# to later be merged.
 for(n in seq(0,360,10)){
-if(n<100){png(file=paste("star_anim0",n,".png",sep=""), width=600, height=900)
-  }else{png(file=paste("star_anim",n,".png",sep=""), width=600, height=900)}
 print(
+  # Form our plot:
   ggplot(catalog,aes(ci,absmag))+
-  geom_point(shape=".",aes(alpha=sin(randomseed+n*pi/180), color=ci))+
-  scale_y_reverse()+
-  scale_color_gradientn(
-    colours=c("blue","skyblue","white","orange","red"),
-    limits= c(-.5,2.5))+
-  scale_x_continuous(limits=c(-.5,2.5))+
-  ggtitle("Hertzsprung–Russell Diagram")+
-  ylab("Absolute Magnitude")+
-  xlab("Color Index (B-V)")+
-  annotate("text",x=0,y=15,label="White Dwarfs",size=4,hjust=0,vjust=0,color="white")+
-  annotate("text",x=2,y=12,label="Main Sequence",size=4,hjust=0,vjust=0,color="white")+
-  annotate("text",x=2,y=0,label="Giants",size=4,hjust=0,vjust=0,color="white")+
-  annotate("text",x=2,y=-10,label="Supergiants",size=4,hjust=0,vjust=0,color="white")+
-  z_theme()
-  )
-dev.off()
-}
+    # Print data points:
+    geom_point(shape=16, size=.001, aes(alpha=(sin(randomseed+n*pi/180)), color=ci))+
+    # X and Y axis:
+    scale_x_continuous(limits=c(-.5,2.5))+
+    scale_y_reverse()+
+    # Scale guides and colors:
+    guides(color=F, alpha=F)+
+    scale_alpha_continuous(range=c(0,1))+
+    scale_color_gradientn(
+      colours=c("blue","skyblue","white","orange","red"),
+      limits= c(-.5,2.5))+
+    # Axis labels and title:
+    labs(title="Hertzsprung–Russell Diagram",
+        subtitle="Classification of Stars",
+         y="Absolute Magnitude",
+        x="Color Index (B-V)",
+        caption="created by /u/zonination")+
+    # Adding text for character:
+    annotate("text",x=0,y=15,label="White Dwarfs",size=4,hjust=0,vjust=0,color="white")+
+    annotate("text",x=1.75,y=12,label="Main Sequence",size=4,hjust=0,vjust=0,color="white")+
+    annotate("text",x=1.75,y=0,label="Giants",size=4,hjust=0,vjust=0,color="white")+
+    annotate("text",x=1.75,y=-10,label="Supergiants",size=4,hjust=0,vjust=0,color="white")+
+    z_theme())
+  # Save the frame, and declare our status:
+  ggsave(paste("star_anim", formatC(n,width=3,flag = "0"), ".png", sep=""), height=9, width=6, dpi=100, type="cairo-png")
+  print(paste(n, "of", 360, "degrees completed."))
+}; rm(n)
+
+# Convert the individual frames into a gif, then remove the individual frames.
 system("convert -delay 10 star_anim*.png twinkle.gif")
 system("rm star_anim*.png")
