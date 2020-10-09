@@ -10,7 +10,7 @@ catalog$randomseed<-runif(nrow(catalog),min=0,max=2*pi)
 
 # This for() loop will step through 36 frames of the gif,
 # to later be merged.
-for(n in seq(0,360,10)){
+for(n in seq(0,360,6)){
 print(
   # Form our plot:
   ggplot(catalog,aes(ci,absmag))+
@@ -38,10 +38,13 @@ print(
     annotate("text",x=1.75,y=-10,label="Supergiants",size=4,hjust=0,vjust=0,color="white")+
     z_theme())
   # Save the frame, and declare our status:
-  ggsave(paste("star_anim", formatC(n,width=3,flag = "0"), ".png", sep=""), height=9, width=6, dpi=100, type="cairo-png")
+  ggsave(paste("star_anim", formatC(n,width=3,flag = "0"), ".png", sep=""), height=15, width=12, dpi=120, type="cairo-png")
   print(paste(n, "of", 360, "degrees completed."))
 }; rm(n)
 
-# Convert the individual frames into a gif, then remove the individual frames.
-system("convert -delay 10 star_anim*.png twinkle.gif")
-system("rm star_anim*.png")
+# Convert the individual frames into a .MKV
+system("rm Rplots.pdf")
+system("python3 rename.py")
+system("ffmpeg -r 12 -i star_anim%03d.png -vcodec libx264 twinkle.mkv")
+system("ffmpeg -i twinkle.mkv twinkle.gif")
+#system("rm star_anim*.png") # Uncomment if you want to delete files upon completion.
