@@ -17,7 +17,7 @@ Stars twinkle for two reasons:
 
 If you're going to play with this:
 
-* Make sure you have ImageMagick installed
+* Make sure you have FFMPEG installed
 * the last line is optimized to work with unix-like systems (Linux/Mac, basically). If you have Windows, replace it with `DEL star_anim*.png`
 * make sure the second line has the correct working directory under `setwd()`.
 
